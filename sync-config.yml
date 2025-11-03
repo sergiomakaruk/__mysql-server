@@ -1,0 +1,57 @@
+# Configuración para sincronización automática de bases de datos
+# Este archivo controla qué bases de datos se sincronizan y cómo
+
+# Lista de bases de datos a sincronizar
+# Los nombres deben ser iguales en producción y local
+databases:
+  # Ejemplo de base de datos con exclusiones
+  - name: pwatk
+    mode: exclude  # "full" para sincronizar todo, "exclude" para excluir tablas
+    exclude_tables:
+      # Lista de tablas pesadas o innecesarias a excluir
+      - tempfiles
+      - tempfiles_v2
+      - img_actions
+      - actions
+    description: "Base de datos principal"
+
+  # Ejemplo de base de datos completa sin exclusiones
+  - name: api_pdf
+    mode: full  # Sincroniza todas las tablas
+    exclude_tables: []
+    description: "Base de datos secundaria"
+
+     # Ejemplo de base de datos completa sin exclusiones
+  - name: api_tanques
+    mode: full  # Sincroniza todas las tablas
+    exclude_tables: []
+    description: "Base de datos secundaria"
+
+# Configuración de auto-inicio
+auto_sync:
+  # Habilitar/deshabilitar sincronización automática al iniciar Docker
+  enabled: true
+
+  # Ejecutar sincronización al iniciar Docker Compose
+  on_docker_start: false
+
+  # Mostrar logs detallados durante la sincronización
+  verbose: true
+
+  # Crear backup antes de sincronizar (recomendado)
+  backup_before_sync: false
+
+# Configuración de logs
+logging:
+  # Directorio donde se guardan los logs
+  log_dir: "./logs"
+
+  # Mantener logs de los últimos N días
+  keep_days: 7
+
+# INSTRUCCIONES:
+# 1. Edita "databases" con los nombres reales de tus bases de datos
+# 2. Para cada BD, elige mode: "full" o "exclude"
+# 3. Si usas "exclude", lista las tablas a excluir en "exclude_tables"
+# 4. Para habilitar auto-inicio, cambia "enabled: true" y "on_docker_start: true"
+# 5. Guarda el archivo y ejecuta: make sync-auto

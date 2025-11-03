@@ -1,0 +1,23 @@
+# Archivos de entorno con contraseñas
+.env
+.env.local
+.env.backup
+
+# Logs de sincronización
+logs/
+*.log
+
+# Backups temporales de SQL
+*.sql
+backups/
+
+# Archivos temporales
+/tmp/
+*.tmp
+
+# Volúmenes de Docker (datos de MySQL)
+mysql-data/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

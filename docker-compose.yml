@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: shared-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOCAL_PASS}
+      MYSQL_DATABASE: ${LOCAL_DB}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - default
+
+  sync-command:
+    image: mysql:8.0
+    container_name: sync-command
+    volumes:
+      - ./scripts:/scripts
+      - ./scripts:/app/scripts
+      - ./sync-config.yml:/app/sync-config.yml
+      - ./logs:/app/logs
+    environment:
+      - DO_HOST=${DO_HOST}
+      - DO_USER=${DO_USER}
+      - DO_PASS=${DO_PASS}
+      - DO_DB=${DO_DB}
+      - DO_PORT=${DO_PORT}
+      - LOCAL_HOST=mysql
+      - LOCAL_USER=${LOCAL_USER}
+      - LOCAL_PASS=${LOCAL_PASS}
+      - LOCAL_DB=${LOCAL_DB}
+    entrypoint: ["/bin/bash"]
+    networks:
+      - default
+    profiles:
+      - tools
+
+networks:
+  default:
+    name: laravel-network
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+#docker-compose --profile tools run --entrypoint "/bin/bash" sync-command /scripts/sync-on-demand.sh
